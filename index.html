@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- 
+		Creator:
+		--------
+		Name: Hafiz Ramadhan
+		Email: hfzrmd@gmail.com
+		Linkedin: https://linkedin.com/in/hfzrmd
+		Github: https://github.com/rmdhfz
+	 -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Body Mass Index - Calculator</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" media="screen">
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="loading.css" media="screen">
+	<style type="text/css">
+		#app {
+			margin-top: 5rem;
+		}
+		[type=radio] { 
+			position: absolute;
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+		[type=radio] + img {
+			cursor: pointer;
+		}
+		[type=radio]:checked + img {
+			outline: 2px solid #f00;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<div class="container">
+			<h2>Body Mass Index <br> <small>Simple application - coding test PT. PGN - <a href="https://linkedin.com/in/hfzrmd" target="_blank">Hafiz Ramadhan</a></small></h2> <hr> <br>
+			<form id="form" autocomplete="off" method="post">
+				<!-- <label>Apa jenis kelamin Anda ?</label> <br>
+				<div class="form-group row">
+					<div class="col-sm-2">
+						<label>
+							<img src="./img/male.svg" class="img-thumbnail">
+							<input type="radio" name="jk" value="pria" checked="true"><br>
+						</label>
+					</div>
+					<div class="col-sm-2">
+						<label>
+							<img src="./img/female.svg" class="img-thumbnail">
+							<input type="radio" name="jk" value="wanita"><br>
+						</label>
+					</div>
+				</div> -->
+				<div class="form-group row">
+					<div class="col-sm-5">
+						<input type="text" class="form-control" name="nama" id="nama" placeholder="nama anda" required="1" pattern="[a-zA-Z\s]{3,25}" minlength="3" maxlength="25" autofocus="on">
+					</div>
+					<div class="col-sm-6">
+						<input type="text" class="form-control" name="usia" id="usia" placeholder="usia anda" required="1" pattern="[0-9]{2,3}" minlength="2" maxlength="3">
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-sm-5">
+						<select id="jk" name="jk" class="form-control" required="1">
+							<option value="" disabled="1" selected="1">Pilih Jenis Kelamin</option>
+							<option value="Pria">Pria</option>
+							<option value="Wanita">Wanita</option>
+						</select>
+					</div>
+					<div class="col-sm-3">
+						<input type="text" class="form-control" name="tinggi" id="tinggi" placeholder="tinggi anda (cm)" required="1" pattern="[0-9]{2,3}" minlength="2" maxlength="3">
+					</div>
+					<div class="col-sm-3">
+						<input type="text" class="form-control" name="berat" id="berat" placeholder="berat anda (kg)" required="1" pattern="[0-9]{2,3}" minlength="2" maxlength="3">
+					</div>
+				</div>
+				<button type="submit" id="submit" class="btn btn-outline-primary"> Hitung </button>
+			</form> <br>
+			<div id="result"></div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+
+		// return the note
+		function setNoteBMI(result) {
+			if (!result) {
+				return false;
+			}
+			let note;
+			if (result >= 18.5 && result <= 25) {
+				note = "<b>Normal</b>. Berat badan Anda Normal";
+			}else if (result > 27) {
+				note = "<b>Gemuk</b>, Kelebihan berat badan (berat)";
+			}else if ((result >= 25.1) & (result <= 27)){
+				note = "<b>Gemuk</b>, Kelebihan berat badan (ringan)";
+			}else if ((result >= 17) & (result <= 18.4)){
+				note = "<b>Kurus</b>, Kekurangan berat badan (ringan)";
+			}else {
+				note = "<b>Kurus</b>, Kekurangan berat badan (berat)";
+			}
+			return note;
+		}
+
+		// return bmi
+		function CountBMI(berat, tinggi){
+			if (!berat || !tinggi) {
+				return false;
+			}
+			let t = parseFloat(tinggi), b = parseFloat(berat);
+			t /= 100;
+			result = b  / (t * t);
+			return result.toFixed(2);
+		}
+
+		const form = $("#form");
+		form.submit(function(event) {
+			event.preventDefault();
+			$("body").addClass('loading');
+			let nama 		= $("#nama").val(),
+				usia 		= $("#usia").val(),
+				jk   		= $("#jk").val(),
+				tinggi 		= $("#tinggi").val(),
+				berat		= $("#berat").val(),
+				result, note;
+
+				// add loading
+				setTimeout(function(){
+					result = CountBMI(berat, tinggi);
+					note = setNoteBMI(result);
+					if (!result || !note) {
+						alert("something wrong");
+						console.error("something wrong");
+					}
+					$("body").removeClass('loading');
+					$("#result").html(
+						`
+							Hasil Perhitungan Body Mass Index: <br>
+							---------------------------------- <br>
+							Nama: ${nama} <br>
+							Usia: ${usia} <br>
+							Jenis Kelamin: ${jk} <br>
+							Tinggi: ${tinggi} <br>
+							Berat: ${berat} <br>
+
+							BMI: ${result} <br>
+							Keterangan: ${note}
+						`
+					);
+				}, 800);
+		});
+	});
+</script>
+</html>
